@@ -154,8 +154,9 @@ There are two ways to verify that the corresponding GGreg20 entities are registe
 
 ## Visualization
 ### Step 10. Add GGreg20 radiation sensor widgets to the Dashboard
-Simple widget example:
+#### Basic widget example:
 ![GGreg20_V3 Dashboard simple widgets example](https://github.com/iotdevicesdev/GGreg20_V3-ESP32-HomeAssistant-ESPHome/blob/main/ESP32_GGreg20_V3_GeigerCounterWidget_2023-01-27_211033.jpg)
+#### Complex widget example:
 Here is an example of a demo tab from an active server for two devices GGreg20_V1 and GGreg20_V3 located in different coordinate axes. Each device uses the same yaml file as we created above.
 ![GGreg20_V3 Dashboard widgets example](https://github.com/iotdevicesdev/ggreg20-v3-homeassistant-esphome-example/blob/main/HA_Rad-Dashboard_Both-GGreg2-GGreg3_dark_2021-04-29_132657.jpg)
 # Order GGreg_V3 Ionizing Radiation Detector Module
