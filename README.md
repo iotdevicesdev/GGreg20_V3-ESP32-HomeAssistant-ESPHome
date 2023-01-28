@@ -3,6 +3,9 @@
 # GGreg20_V3 with generic ESP32 under Home Assistant with ESPHome setup example
 IoT-devices GGreg20_V3 Ionizing Radiation Geiger counter module under Home Assistant server with ESPHome plugin yaml-script setup example for generic ESP32.
 
+⚠️ This repo adds an important setting: anti-jitter for the ESP32 pulse counter port. This allows you to filter out events whose duration is shorter than the deadtime of the SBM20 tube.
+Also, the yaml code shows how to properly configure the ESP32 port, which is used to connect the GGreg20_V3 pulse output.
+
 Hackaday Project Page: https://hackaday.io/project/183103-ggreg20v3-ionizing-radiation-detector
 
 ESPHome-Devices Project Page: https://www.esphome-devices.com/devices/IoT-devices-GGreg20-V3/
