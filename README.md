@@ -7,7 +7,7 @@ Hackaday Project Page: https://hackaday.io/project/183103-ggreg20v3-ionizing-rad
 
 ESPHome-Devices Project Page: https://www.esphome-devices.com/devices/IoT-devices-GGreg20-V3/
 
-ESPHome generic ESP32 Page: https://esphome.io/components/esp32.html
+ESPHome ESP32 Page: https://esphome.io/components/esp32.html
 
 # ESPHome and Home Assistant Compatibility
 This hardware device is designed to be compatible with as many common software platforms and hardware systems as possible. GGreg20_V3 is compatible with any of the following systems: Arduino, ESP8266, ESP32, STM32, Raspberry Pi, ESPHome, Home Assistant, Tasmota, MicroPython, NodeMCU, Node-RED and many others. All you need to connect the GGreg20_V3 is a system with a pulse counter on the GPIO and a timer to measure time.
@@ -138,13 +138,19 @@ Next you need to write the firmware to the ESP32 controller. This can be done by
 After flashing the firmware and restarting the new device, it is recommended to restart the Home Assistant server too.
 
 Important! After starting the server you need to go to the menu Configuration -> Integration. Find there a new device that you flashed and connect it to the server configuration, if it is not connected automatically.
+![GGreg20_V3 esphome esp32 page](https://github.com/iotdevicesdev/GGreg20_V3-ESP32-HomeAssistant-ESPHome/blob/main/ESPHome_HA_section_2023-01-27_211135.jpg)
 
 ## Entities and values of the device on the server
 ### Step 8. Check the ESPHome log of the ESP32 (optional)
+![GGreg20_V3 esphome esp32 log](https://github.com/iotdevicesdev/GGreg20_V3-ESP32-HomeAssistant-ESPHome/blob/main/esp32_ggreg20_v3_ESPHome_Log_2023-01-27_211850.jpg)
+
 ### Step 9. Check for new entities on the server side
 There are two ways to verify that the corresponding GGreg20 entities are registered in the Home Assistant server:
 - go to the Developer Tools menu on the sidebar of the Home Assistant interface and search for the relevant data;
+![GGreg20_V3 entities dev tools](https://github.com/iotdevicesdev/GGreg20_V3-ESP32-HomeAssistant-ESPHome/blob/main/HA_DevTools_Entities_2023-01-27_211601.jpg)
 - or go to the menu Configuration -> Integration and search there.
+![GGreg20_V3 esphome entities](https://github.com/iotdevicesdev/GGreg20_V3-ESP32-HomeAssistant-ESPHome/blob/main/ESPHome_HA_Entities_2023-01-27_211430.jpg)
+
 
 ## Visualization
 ### Step 10. Add GGreg20 radiation sensor widgets to the Dashboard
