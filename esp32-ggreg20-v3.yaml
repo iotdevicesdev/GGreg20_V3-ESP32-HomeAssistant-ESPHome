@@ -1,0 +1,101 @@
+esphome:
+  name: "esp32-ggreg20-v3"
+
+esp32:
+  board: esp32dev
+  framework:
+    type: arduino
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+
+ota:
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Esphome-GGreg20-V3-ESP32"
+    password: "vgcSNevqmK33"
+
+captive_portal:
+
+# Binary sensor on selected by us example incoming pulse port (GPIO23) of ESP32 devboard
+binary_sensor:
+  - platform: gpio
+    name: "Pulse input state"
+    id: my_pulse_input
+    pin:
+      number: 23
+      inverted: True
+      mode: 
+        input: True 
+        # No pullup or pulldown on ESP32 side because of internal pullup set in hardware at GGreg20_V3 pulse output side
+        pullup: False
+        pulldown: False
+# Here we also can use GPIO debounce, but smallest possible value here is 1 millisecond. Unfortunately microseconds are not allowed by ESPHome API for GPIO Binary sensor. 
+# Warning. Using this may potentially filterout near 5 true-positive events per minute for SBM20 GM tube with 190us deadtime:
+# 190/1000 = 0,19 i.e. +19% measure error at normal background conditions.
+#
+# Also please note, that 'pulse counter' method of ESPHome API in the next sections by default filters out incoming pulses shorter than 13 µs on GPIO, thus we use 'use_pcnt' and 'internal_filter' options. 
+# So false-positives may take place someware between 13 microseconds and 190 microseconds if 1 ms debounce functionality is not engeged here or if 'pusle counter' uses defaults.
+# See datails on 'use_pcnt' and 'internal_filter' here: https://esphome.io/components/sensor/pulse_counter.html
+# Please use more presise 'pulse counter' debounce in the next sections instead of GPIO debounce here.
+#
+#    filters:
+#      - delayed_on: 1ms
+
+# Here we calc and include to the firmware a power and dose values of ionizing radiation as sensor outputs
+sensor:
+- platform: pulse_counter
+  pin: GPIO23
+  unit_of_measurement: 'CPM'
+  name: 'Ionizing Radiation Power CPM'
+  count_mode: 
+    rising_edge: DISABLE
+    falling_edge: INCREMENT # GGreg20_V3 uses Active-Low logic
+# It seems that only one instance of pulse counter internal filters can be set
+# So here no any debounce filters for CPM value 
+#  use_pcnt: False
+#  internal_filter: 190us
+  update_interval: 60s
+  accuracy_decimals: 0
+  id: my_cpm_meter
+    
+- platform: pulse_counter
+  pin: GPIO23
+  unit_of_measurement: 'mkSv/Hour'
+  name: 'Ionizing Radiation Power'
+  count_mode: 
+    rising_edge: DISABLE
+    falling_edge: INCREMENT
+  # Hardware counter alows only 13us debounce, so we set it OFF:
+  use_pcnt: False
+  # When hw counter is OFF then we may set our filter time to SBM20 190 us Deadtime value or any other (also in microseconds):
+  internal_filter: 190us
+  update_interval: 60s
+  accuracy_decimals: 3
+  id: my_dose_meter
+  filters:
+    - sliding_window_moving_average: # 5-minutes moving average (MA5) here
+        window_size: 5
+        send_every: 5      
+    - multiply: 0.0057 # SBM20 tube conversion factor of pulses into mkSv/Hour 
+
+- platform: integration
+  name: "Total Ionizing Radiation Dose"
+  unit_of_measurement: "mkSv"
+  sensor: my_dose_meter # link entity id to the pulse_counter values above
+  icon: "mdi:radioactive"
+  accuracy_decimals: 5
+  time_unit: min # integrate values every next minute
+  filters:
+    # obtained dose. Converting from mkSv/hour into mkSv/minute: [mkSv/h / 60] OR [mkSv/h * 0.0166666667]. 
+    # if my_dose_meter in CPM, then [0.0054 / 60 minutes] = 0.00009; so CPM * 0.00009 = dose every next minute, mkSv.
+    - multiply: 0.0166666667    
