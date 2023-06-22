@@ -60,7 +60,7 @@ sensor:
     
 - platform: pulse_counter
   pin: GPIO23
-  unit_of_measurement: 'mkSv/Hour'
+  unit_of_measurement: 'uSv/Hour'
   name: 'Ionizing Radiation Power'
   count_mode: 
     rising_edge: DISABLE
@@ -76,7 +76,7 @@ sensor:
     - sliding_window_moving_average: # 5-minutes moving average (MA5) here
         window_size: 5
         send_every: 5      
-    - multiply: 0.0057 # SBM20 tube conversion factor of pulses into mkSv/Hour 
+    - multiply: 0.0057 # SBM20 tube conversion factor of pulses into uSv/Hour 
 ```
 
 To calculate the total radiation dose received in microsieverts, the Integration Sensor, also a component of the ESPHome API, is used:
@@ -87,14 +87,14 @@ This part of the yaml code is responsible for that:
 sensor:
 - platform: integration
   name: "Total Ionizing Radiation Dose"
-  unit_of_measurement: "mkSv"
+  unit_of_measurement: "uSv"
   sensor: my_dose_meter # link entity id to the pulse_counter values above
   icon: "mdi:radioactive"
   accuracy_decimals: 5
   time_unit: min # integrate values every next minute
   filters:
-    # obtained dose. Converting from mkSv/hour into mkSv/minute: [mkSv/h / 60] OR [mkSv/h * 0.0166666667]. 
-    # if my_dose_meter in CPM, then [0.0054 / 60 minutes] = 0.00009; so CPM * 0.00009 = dose every next minute, mkSv.
+    # obtained dose. Converting from uSv/hour into uSv/minute: [uSv/h / 60] OR [uSv/h * 0.0166666667]. 
+    # if my_dose_meter in CPM, then [0.0054 / 60 minutes] = 0.00009; so CPM * 0.00009 = dose every next minute, uSv.
     - multiply: 0.0166666667
 ```
 Also, in order to setup the pulse counter GPIO for the GGreg20 sensor, a binary sensor has been added to the configuration - on the same GPIO23 as the Pulse Counter - but another ESPHome API component, GPIO Binary Sensor, is used:
