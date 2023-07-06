@@ -73,10 +73,13 @@ sensor:
   accuracy_decimals: 3
   id: my_dose_meter
   filters:
+    # if J305 tube is used uncomment this line:
+    #- offset: -12 # because J305 has background internal noise 0.2 pulses / sec x 60 sec = 12 CPM (Counts per minute)
     - sliding_window_moving_average: # 5-minutes moving average (MA5) here
         window_size: 5
-        send_every: 5      
-    - multiply: 0.0057 # SBM20 tube conversion factor of pulses into uSv/Hour 
+        send_every: 1
+    # 0.00332 for J305βγ glass GM tube (datasheet sensitivity at 60Co, 44 CPS per mR/h) conversion factor of pulses into uSv/Hour
+    - multiply: 0.0057 # SBM20 tube conversion factor of pulses into uSv/Hour
 ```
 
 To calculate the total radiation dose received in microsieverts, the Integration Sensor, also a component of the ESPHome API, is used:
@@ -94,7 +97,9 @@ sensor:
   time_unit: min # integrate values every next minute
   filters:
     # obtained dose. Converting from uSv/hour into uSv/minute: [uSv/h / 60] OR [uSv/h * 0.0166666667]. 
-    # if my_dose_meter in CPM, then [0.0054 / 60 minutes] = 0.00009; so CPM * 0.00009 = dose every next minute, uSv.
+    # if my_dose_meter in CPM, then
+    #   for SBM20 [0.0057 / 60 minutes] = 0.000095; so CPM * 0.000095 = dose every next minute, uSv.
+    #   for J305 [0.00332 / 60 minutes] = 0.00005533; so CPM * 0.00005533 = dose every next minute, uSv.
     - multiply: 0.0166666667
 ```
 Also, in order to setup the pulse counter GPIO for the GGreg20 sensor, a binary sensor has been added to the configuration - on the same GPIO23 as the Pulse Counter - but another ESPHome API component, GPIO Binary Sensor, is used:
