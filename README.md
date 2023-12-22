@@ -46,42 +46,36 @@ This part of the yaml code is responsible for that:
 ```yaml
 sensor:
 - platform: pulse_counter
-  pin: GPIO23
+  pin:
+    number: 23
+    inverted: True
+    mode: 
+      input: True 
+      # No pullup or pulldown on ESP32 side because of internal pullup set in hardware at GGreg20_V3 pulse output side
+      pullup: False
+      pulldown: False
   unit_of_measurement: 'CPM'
   name: 'Ionizing Radiation Power CPM'
   count_mode: 
     rising_edge: DISABLE
     falling_edge: INCREMENT # GGreg20_V3 uses Active-Low logic
-# It seems that only one instance of pulse counter internal filters can be set
-# So here no any debounce filters for CPM value 
-#  use_pcnt: False
-#  internal_filter: 190us
+  use_pcnt: False
+  internal_filter: 190us # for SBM20 tube, for J305 tube use 180us
   update_interval: 60s
   accuracy_decimals: 0
   id: my_cpm_meter
     
-- platform: pulse_counter
-  pin: GPIO23
+- platform: copy
+  source_id: my_cpm_meter
   unit_of_measurement: 'uSv/Hour'
   name: 'Ionizing Radiation Power'
-  count_mode: 
-    rising_edge: DISABLE
-    falling_edge: INCREMENT
-  # Hardware counter alows only 13us debounce, so we set it OFF:
-  use_pcnt: False
-  # When hw counter is OFF then we may set our filter time to SBM20 190 us Deadtime value or any other (also in microseconds):
-  internal_filter: 190us
-  update_interval: 60s
   accuracy_decimals: 3
   id: my_dose_meter
   filters:
-    # if J305 tube is used uncomment this line:
-    #- offset: -12 # because J305 has background internal noise 0.2 pulses / sec x 60 sec = 12 CPM (Counts per minute)
     - sliding_window_moving_average: # 5-minutes moving average (MA5) here
         window_size: 5
-        send_every: 1
-    # 0.00332 for J305βγ glass GM tube (datasheet sensitivity at 60Co, 44 CPS per mR/h) conversion factor of pulses into uSv/Hour
-    - multiply: 0.0057 # SBM20 tube conversion factor of pulses into uSv/Hour
+        send_every: 1      
+    - multiply: 0.0057 # for SBM20 or 0.00332 for J305 by IoT-devices tube conversion factor of pulses into uSv/Hour 
 ```
 
 To calculate the total radiation dose received in microsieverts, the Integration Sensor, also a component of the ESPHome API, is used:
@@ -104,26 +98,6 @@ sensor:
     #   for J305 [0.00332 / 60 minutes] = 0.00005533; so CPM * 0.00005533 = dose every next minute, uSv.
     - multiply: 0.0166666667
 ```
-Also, in order to setup the pulse counter GPIO for the GGreg20 sensor, a binary sensor has been added to the configuration - on the same GPIO23 as the Pulse Counter - but another ESPHome API component, GPIO Binary Sensor, is used:
-https://esphome.io/components/binary_sensor/gpio.html
-
-This part of the yaml code is responsible for that:
-```yaml
-binary_sensor:
-  - platform: gpio
-    name: "Pulse input state"
-    id: my_pulse_input
-    pin:
-      number: 23
-      inverted: True
-      mode: 
-        input: True 
-        # No pullup or pulldown on ESP32 side because of internal pullup set in hardware at GGreg20_V3 pulse output side
-        pullup: False
-        pulldown: False
-```
-
-The ESPHome plugin has sufficient documentation for these components with examples, so we will not go into detailed explanations.
 
 ### Step 4. Create (based on the example) in ESPHome the appropriate yaml configuration file
 After downloading the file, we suggest you open it with any text editor and become familiar with its contents.
