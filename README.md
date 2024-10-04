@@ -109,7 +109,21 @@ After completing the "wizard", a standard file with the basic parameters appears
 ### Step 5. Select the GPIO pin on the controller that will register the pulses from GGreg20
 
 ### Step 6. Connect the GGreg20_V3 radiation detector to the ESP32 controller via the Out connector to the selected GPIO of the controller
-As you can see, the connection is quite simple - you only need to supply power from the NodeMCU for the GGreg20 module, and connect the output (Out) of the sensor to the input (GPIOxx) of the controller and supply 5V to the micro USB connector of the ESP32 board.
+As you can see, the connection is quite simple - you only need to supply power from the ESP32 board for the GGreg20 module, and connect the output (Out) of the sensor to the input (GPIOxx) of the controller and supply 5V to the micro USB connector of the ESP32 board:
+
+There are two ways to connect the GGreg20_V3 to the ESP32 board power supply: 
+- supply the GGreg20_V3 with 3.3V
+- supply GGreg20_V3 with 5V voltage.
+
+You can also choose the third option, when both modules are powered by independent power supplies. In this case, note that both modules must be connected to a common ground.
+
+The three options are shown in the following figures.
+![GGreg20_V3 and ESP32 WROOM devboard wiring diagram_5v](https://github.com/user-attachments/assets/6e9be215-b86d-490a-92cf-669262174daf)
+---
+![GGreg20_V3 and ESP32 WROOM devboard wiring diagram_3v3](https://github.com/user-attachments/assets/9ec14521-34cf-4ed7-b5d4-8f41fb885c48)
+---
+![GGreg20_V3 and ESP32 WROOM devboard wiring diagram_indepPS](https://github.com/user-attachments/assets/30e01113-5585-4679-85cf-3e7c70fa398d)
+
 
 ## Flashing the ESP32 device
 ### Step 7. Build and write firmware for the controller
