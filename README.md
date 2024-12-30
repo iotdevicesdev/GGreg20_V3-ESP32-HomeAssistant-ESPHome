@@ -6,6 +6,16 @@ IoT-devices GGreg20_V3 Ionizing Radiation Geiger counter module under Home Assis
 ⚠️ This repo adds an important setting: anti-jitter for the ESP32 pulse counter port. This allows you to filter out events whose duration is shorter than the deadtime of the SBM20 tube.
 Also, the yaml code shows how to properly configure the ESP32 port, which is used to connect the GGreg20_V3 pulse output.
 
+---
+⚠️ **Known issues and walkarounds**: 
+
+Added on 30/12/2024 - ESPHome pulse_counter internal filter and GGreg20_V3 pulse counting
+- Issue: https://github.com/iotdevicesdev/GGreg20_V3-ESP32-HomeAssistant-ESPHome/issues/5
+- Walkaround:
+is to disable internal filter settings in YAML-code:
+https://github.com/iotdevicesdev/GGreg20_V3-ESP32-HomeAssistant-ESPHome/blob/main/esp32-ggreg20-v3.yaml
+---
+
 Hackaday Project Page: https://hackaday.io/project/183103-ggreg20v3-ionizing-radiation-detector
 
 ESPHome-Devices Project Page: https://www.esphome-devices.com/devices/IoT-devices-GGreg20-V3/
@@ -59,8 +69,8 @@ sensor:
   count_mode: 
     rising_edge: DISABLE
     falling_edge: INCREMENT # GGreg20_V3 uses Active-Low logic
-  use_pcnt: False
-  internal_filter: 190us # for SBM20 tube, for J305 tube use 180us
+  # use_pcnt: False
+  # internal_filter: 190us # for SBM20 tube, for J305 tube use 180us
   update_interval: 60s
   accuracy_decimals: 0
   id: my_cpm_meter
