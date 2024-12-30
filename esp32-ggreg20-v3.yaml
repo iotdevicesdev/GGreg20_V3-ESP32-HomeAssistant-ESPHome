@@ -44,8 +44,11 @@ sensor:
   count_mode: 
     rising_edge: DISABLE
     falling_edge: INCREMENT # GGreg20_V3 uses Active-Low logic
-  use_pcnt: False
-  internal_filter: 190us # for SBM20 tube, for J305 tube use 180us
+  # See ESPHome pulse_counter's internal filter in software mode issue here: 
+  # https://github.com/iotdevicesdev/GGreg20_V3-ESP32-HomeAssistant-ESPHome/issues/5
+  # Issue walkaround is to disable these two lines:
+  # use_pcnt: False ### disabled on 30/12/2024
+  # internal_filter: 190us # for SBM20 tube, for J305 tube use 180us ### disabled on 30/12/2024
   update_interval: 60s
   accuracy_decimals: 0
   id: my_cpm_meter
